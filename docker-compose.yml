@@ -1,0 +1,58 @@
+version: '3.8'
+
+x-shared-env: &shared-env
+  GEMINI_API_KEY: ${GEMINI_API_KEY}
+  GOOGLE_API_KEY: ${GEMINI_API_KEY}
+  GOOGLE_GENAI_USE_VERTEXAI: "false"
+
+services:
+  app-server:
+    build: ./app
+    network_mode: "host"
+    environment:
+      <<: *shared-env
+      PORT: 8000
+      AGENT_SERVER_URL: "http://127.0.0.1:8004"
+    volumes:
+      - ./fake-gcloud:/usr/local/bin/gcloud
+    restart: unless-stopped
+
+  researcher:
+    build: ./agents/researcher
+    network_mode: "host"
+    environment:
+      <<: *shared-env
+      PORT: 8001
+    volumes:
+      - ./fake-gcloud:/usr/local/bin/gcloud
+    restart: unless-stopped
+
+  judge:
+    build: ./agents/judge
+    network_mode: "host"
+    environment:
+      <<: *shared-env
+      PORT: 8002
+    volumes:
+      - ./fake-gcloud:/usr/local/bin/gcloud
+    restart: unless-stopped
+
+  content-builder:
+    build: ./agents/content_builder
+    network_mode: "host"
+    environment:
+      <<: *shared-env
+      PORT: 8003
+    volumes:
+      - ./fake-gcloud:/usr/local/bin/gcloud
+    restart: unless-stopped
+
+  orchestrator:
+    build: ./agents/orchestrator
+    network_mode: "host"
+    environment:
+      <<: *shared-env
+      PORT: 8004
+    volumes:
+      - ./fake-gcloud:/usr/local/bin/gcloud
+    restart: unless-stopped
