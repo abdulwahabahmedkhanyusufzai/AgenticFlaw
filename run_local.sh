@@ -136,20 +136,20 @@ ensure_gcloud_for_local_auth
 validate_runtime_env
 stop_existing_ports
 
-: "${RESEARCHER_AGENT_CARD_URL:=http://localhost:8001/a2a/agent/.well-known/agent.json}"
-: "${JUDGE_AGENT_CARD_URL:=http://localhost:8002/a2a/agent/.well-known/agent.json}"
-: "${CONTENT_BUILDER_AGENT_CARD_URL:=http://localhost:8003/a2a/agent/.well-known/agent.json}"
+: "${RESEARCHER_AGENT_CARD_URL:=http://localhost:8001/a2a/agent/.well-known/agent-card.json}"
+: "${JUDGE_AGENT_CARD_URL:=http://localhost:8002/a2a/agent/.well-known/agent-card.json}"
+: "${CONTENT_BUILDER_AGENT_CARD_URL:=http://localhost:8003/a2a/agent/.well-known/agent-card.json}"
 : "${AGENT_SERVER_URL:=http://localhost:8004}"
 export RESEARCHER_AGENT_CARD_URL
 export JUDGE_AGENT_CARD_URL
 export CONTENT_BUILDER_AGENT_CARD_URL
 export AGENT_SERVER_URL
 
-start_service "Researcher Agent" "cd \"${SCRIPT_DIR}/agents/researcher\" && \"${UV_BIN}\" run adk_app.py --host 0.0.0.0 --port 8001 --a2a ."
-start_service "Judge Agent" "cd \"${SCRIPT_DIR}/agents/judge\" && \"${UV_BIN}\" run adk_app.py --host 0.0.0.0 --port 8002 --a2a ."
-start_service "Content Builder Agent" "cd \"${SCRIPT_DIR}/agents/content_builder\" && \"${UV_BIN}\" run adk_app.py --host 0.0.0.0 --port 8003 --a2a ."
-start_service "Orchestrator Agent" "cd \"${SCRIPT_DIR}/agents/orchestrator\" && \"${UV_BIN}\" run adk_app.py --host 0.0.0.0 --port 8004 ."
-start_service "App Server" "cd \"${SCRIPT_DIR}/app\" && \"${UV_BIN}\" run uvicorn main:app --host 0.0.0.0 --port 8000"
+start_service "Researcher Agent" "cd \"${SCRIPT_DIR}/agents/researcher\" && \"${UV_BIN}\" run --frozen adk_app.py --host 0.0.0.0 --port 8001 --a2a ."
+start_service "Judge Agent" "cd \"${SCRIPT_DIR}/agents/judge\" && \"${UV_BIN}\" run --frozen adk_app.py --host 0.0.0.0 --port 8002 --a2a ."
+start_service "Content Builder Agent" "cd \"${SCRIPT_DIR}/agents/content_builder\" && \"${UV_BIN}\" run --frozen adk_app.py --host 0.0.0.0 --port 8003 --a2a ."
+start_service "Orchestrator Agent" "cd \"${SCRIPT_DIR}/agents/orchestrator\" && \"${UV_BIN}\" run --frozen adk_app.py --host 0.0.0.0 --port 8004 ."
+start_service "App Server" "cd \"${SCRIPT_DIR}/app\" && \"${UV_BIN}\" run --frozen uvicorn main:app --host 0.0.0.0 --port 8000"
 
 wait_for_http "Researcher agent card" "${RESEARCHER_AGENT_CARD_URL}"
 wait_for_http "Judge agent card" "${JUDGE_AGENT_CARD_URL}"
