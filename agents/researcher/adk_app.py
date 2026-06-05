@@ -251,6 +251,33 @@ def main(
         from starlette.middleware.base import BaseHTTPMiddleware
         from a2a_utils import a2a_card_dispatch
         app.add_middleware(BaseHTTPMiddleware, dispatch=a2a_card_dispatch)
+        
+        # Alias A2A routes to /a2a/agent for compatibility
+        from fastapi.routing import APIRoute
+        from starlette.routing import Route
+        new_routes = []
+        for route in app.router.routes:
+            if hasattr(route, "path") and route.path.startswith("/a2a/") and not route.path.startswith("/a2a/agent"):
+                parts = route.path.split("/")
+                if len(parts) > 2:
+                    old_prefix = f"/a2a/{parts[2]}"
+                    new_path = route.path.replace(old_prefix, "/a2a/agent", 1)
+                    if isinstance(route, APIRoute):
+                        new_route = APIRoute(
+                            new_path,
+                            endpoint=route.endpoint,
+                            methods=route.methods,
+                            name=route.name + "_alias" if route.name else None,
+                        )
+                    else:
+                        new_route = Route(
+                            new_path,
+                            endpoint=route.endpoint,
+                            methods=route.methods,
+                            name=route.name + "_alias" if route.name else None,
+                        )
+                    new_routes.append(new_route)
+        app.router.routes.extend(new_routes)
     for fd in files_to_delete:
         fd.unlink()
     for fd in folders_to_delete:
