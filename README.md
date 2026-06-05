@@ -45,15 +45,20 @@ To avoid duplication, these files are linked into respective subdirectories as [
 
 1.  **Install Dependencies:**
     ```bash
-    uv sync
+    uv sync --frozen
     ```
 
-2.  **Set up credentials:**
-    Ensure you have Google Cloud credentials available. You might need to run:
+2.  **Set up credentials (choose one mode):**
+    *Vertex AI mode*:
     ```bash
+    export GOOGLE_GENAI_USE_VERTEXAI=true
     gcloud auth application-default login
+    gcloud config set project <PROJECT_ID>
     ```
-    And ensure your `GOOGLE_CLOUD_PROJECT` environment variable is set.
+    *API key mode*:
+    ```bash
+    export GOOGLE_API_KEY=<your-api-key>
+    ```
 
 3.  **Run Locally:**
     ```bash
@@ -73,11 +78,8 @@ To deploy to Google Cloud Run, you need to deploy each service individually and 
 
 2.  **Deploy Agent App:**
     Deploy the `app/` folder to Cloud Run.
-    Set the following environment variables on the Agent App service:
-    *   `RESEARCHER_AGENT_CARD_URL`: `https://<researcher-url>/a2a/agent/.well-known/agent.json`
-    *   `JUDGE_AGENT_CARD_URL`: `https://<judge-url>/a2a/agent/.well-known/agent.json`
-    *   `CONTENT_BUILDER_AGENT_CARD_URL`: `https://<content-builder-url>/a2a/agent/.well-known/agent.json`
-    *   `AGENT_URL`: `https://<orchestrator-url>`
+    Set:
+    *   `AGENT_SERVER_URL`: `https://<orchestrator-url>`
 
 3.  **Access:**
     Open the App's URL in your browser.
