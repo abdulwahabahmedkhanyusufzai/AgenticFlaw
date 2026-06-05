@@ -1,4 +1,4 @@
-from google.adk.agents import Agent
+from google.adk import Agent
 from google.adk.tools.google_search_tool import google_search
 
 

@@ -98,7 +98,6 @@ root_agent = Workflow(
         ("START", researcher),
         (researcher, judge),
         (judge, check_feedback),
-        (check_feedback, content_builder, "pass"),
-        (check_feedback, researcher, "fail"),
+        (check_feedback, {"pass": content_builder, "fail": researcher}),
     ],
 )

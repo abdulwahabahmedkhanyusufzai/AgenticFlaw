@@ -1,4 +1,4 @@
-from google.adk.agents import Agent
+from google.adk import Agent
 
 
 MODEL = "gemini-3-flash-preview"
